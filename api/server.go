@@ -19,7 +19,7 @@ type server struct {
 }
 
 // config is the HTTP server configuration.
-type config struct {
+type Config struct {
 	// logger is the logging instance to use
 	logger *zap.Logger
 	// fmService is the financial modelling service
