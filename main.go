@@ -1,5 +1,11 @@
 package main
 
+import (
+	"gitlab.com/open-source-keir/financial-modelling/fm-catalogue/api"
+	"gitlab.com/open-source-keir/financial-modelling/fm-catalogue/config"
+	"go.uber.org/zap"
+)
+
 func main() {
 	if err := run(); err != nil {
 		panic(err)
