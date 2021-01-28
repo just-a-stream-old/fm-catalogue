@@ -54,6 +54,7 @@ func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *server) Run() {
+	s.logger.Info(fmt.Sprintf("%s-%s running on port %s", s.name, s.version, s.Addr))
 	if err := s.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		s.logger.Error(err.Error())
 	}
