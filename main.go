@@ -3,6 +3,7 @@ package main
 import (
 	"gitlab.com/open-source-keir/financial-modelling/fm-catalogue/api"
 	"gitlab.com/open-source-keir/financial-modelling/fm-catalogue/config"
+	"gitlab.com/open-source-keir/financial-modelling/fm-catalogue/repository"
 	"gitlab.com/open-source-keir/financial-modelling/fm-catalogue/service"
 	"go.uber.org/zap"
 )
@@ -25,7 +26,9 @@ func run() error {
 		return err
 	}
 
-	fMService := service.NewFMService(logger)
+	fMRepository, err := repository.NewFMRepository(logger)
+
+	fMService := service.NewFMService(logger, fMRepository)
 
 	server := api.NewServer(&api.Config{
 		Logger:    logger,
