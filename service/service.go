@@ -1,13 +1,18 @@
 package service
 
-type service interface {
+type FMService interface {
+	Do()
+}
+
+type fMService struct {
 
 }
 
-type Service struct {
-
+func (fms *fMService) Do() {
 }
 
-func NewFmService() (service, error) {
-	return Service{}, nil
+func NewFMService() *fMService {
+	return &fMService{
+
+	}
 }

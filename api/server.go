@@ -13,39 +13,40 @@ type server struct {
 	http.Server
 	router *chi.Mux
 	logger *zap.Logger
-	fmService service.Service
+	fMService service.FMService
 	name string
 	version string
 }
 
-// config is the HTTP server configuration.
+// Config is the HTTP server configuration.
 type Config struct {
-	// logger is the logging instance to use
-	logger *zap.Logger
-	// fmService is the financial modelling service
-	fmService fmService
-	// name is the name of the service
-	name string
-	// version is the version of the service
-	version string
-	// port is the HTTP port to serve on
-	port int
+	// Logger is the logging instance to use
+	Logger *zap.Logger
+	// service is the financial modelling service
+	FMService service.FMService
+	// Name is the Name of the service
+	Name string
+	// Version is the Version of the service
+	Version string
+	// Port is the HTTP Port to serve on
+	Port int
 }
 
 // NewServer creates a new server.
-func NewServer(cfg *config) *server {
+func NewServer(cfg *Config) *server {
 	s := &server{
-		logger: cfg.logger,
-		fmService: cfg.fmService,
-		name: cfg.name,
-		version: cfg.version,
+		logger: cfg.Logger,
+		fMService: cfg.fmService,
+		name: cfg.Name,
+		version: cfg.Version,
 	}
 	s.router = chi.NewRouter()
 	s.Server = http.Server{
-		Addr: fmt.Sprintf(":%d", cfg.port),
+		Addr: fmt.Sprintf(":%d", cfg.Port),
 		Handler: s,
 	}
-	s.re
+	s.registerRoutes()
+	return s
 }
 
 func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {

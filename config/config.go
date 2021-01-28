@@ -21,6 +21,8 @@ type Config struct {
 
 // ServerConfig is configuration relating to the server
 type Server struct {
+	Name string `envconfig:"SERVER_NAME" required:"true"`
+	Version string `envconfig:"SERVER_VERSION" required:"true"`
 	Port int `envconfig:"SERVER_PORT" required:"true"`
 }
 

@@ -25,16 +25,17 @@ func run() error {
 	}
 	defer logger.Sync()
 
-	fmService, err := service.NewFmService()
+	fMService := service.NewFMService()
 
-	server, err := api.NewServer(&api.Config{
-
+	server := api.NewServer(&api.Config{
+		Logger:    logger,
+		FMService: fMService,
+		Name:      cfg.Server.Name,
+		Version:   cfg.Server.Version,
+		Port:      cfg.Server.Port,
 	})
-	if err != nil {
-		// Todo: log here?
-		return err
-	}
 
 	server.Run()
+
 	return nil
 }
