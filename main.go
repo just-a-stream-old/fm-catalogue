@@ -14,18 +14,17 @@ func main() {
 }
 
 func run() error {
-	cfg, err := config.GetConfig()
-	if err != nil {
-		return err
-	}
-
 	logger, err := zap.NewDevelopment()
 	if err != nil {
 		return err
 	}
 	defer logger.Sync()
 
-	// Pass repository
+	cfg, err := config.GetConfig()
+	if err != nil {
+		return err
+	}
+
 	fMService := service.NewFMService(logger)
 
 	server := api.NewServer(&api.Config{
