@@ -36,7 +36,7 @@ type Config struct {
 func NewServer(cfg *Config) *server {
 	s := &server{
 		logger: cfg.Logger,
-		fMService: cfg.fmService,
+		fMService: cfg.FMService,
 		name: cfg.Name,
 		version: cfg.Version,
 	}

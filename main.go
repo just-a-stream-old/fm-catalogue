@@ -25,7 +25,8 @@ func run() error {
 	}
 	defer logger.Sync()
 
-	fMService := service.NewFMService()
+	// Pass repository
+	fMService := service.NewFMService(logger)
 
 	server := api.NewServer(&api.Config{
 		Logger:    logger,
