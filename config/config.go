@@ -29,6 +29,10 @@ type Server struct {
 func GetConfig() (*Config, error) {
 	activeProfile := strings.TrimSpace(os.Getenv(ActiveProfile))
 
+	if activeProfile == "" {
+		activeProfile = "default"
+	}
+
 	file := filepath.Join(ConfigDirectory, fmt.Sprintf("%s.env", activeProfile))
 	if err := godotenv.Load(file); err != nil {
 		// Todo: Log here?
