@@ -32,13 +32,13 @@ func run() error {
 		return err
 	}
 
-	dbClient, err := setupDB(&cfg.Repository)
+	dbClient, err := setupDBClient(&cfg.Repository)
 	if err != nil {
 		logger.Error(err.Error())
 		return err
 	}
 	defer func() {
-		if err := closeDB(dbClient); err != nil {
+		if err := closeDBClient(dbClient); err != nil {
 			logger.Error(err.Error())
 		}
 	}()
@@ -62,7 +62,7 @@ func run() error {
 	return nil
 }
 
-func setupDB(cfg *config.Repository) (*mongo.Client, error) {
+func setupDBClient(cfg *config.Repository) (*mongo.Client, error) {
 	// Cancel if database connection is not established within time provided
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -73,7 +73,7 @@ func setupDB(cfg *config.Repository) (*mongo.Client, error) {
 	return dbClient, err
 }
 
-func closeDB(dbClient *mongo.Client) error {
+func closeDBClient(dbClient *mongo.Client) error {
 	return dbClient.Disconnect(context.TODO())
 }
 
