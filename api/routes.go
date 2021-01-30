@@ -22,6 +22,6 @@ func (s *server) registerRoutes() {
 	// Query
 	s.router.Route(apiVersion + "/exchanges", func(r chi.Router) {
 		//r.With(paginate).Get("/", s.listExchanges())
-		r.Get("/", s.listExchanges())  				// GET /api/v1/exchanges
+		r.Get("/", s.getExchanges())  				// GET /api/v1/exchanges
 	})
 }
