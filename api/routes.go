@@ -1,13 +1,14 @@
 package api
 
 import (
+	"fmt"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"time"
 )
 
 func (s *server) registerRoutes() {
-	// Todo: Add a sub route like /api/v1
+	apiVersion := fmt.Sprintf("/api/%s", s.version)
 
 	// Middleware
 	s.router.Use(middleware.RequestID)
@@ -19,8 +20,8 @@ func (s *server) registerRoutes() {
 	// Command
 
 	// Query
-	s.router.Route("/api/v1/exchanges", func(r chi.Router) {
+	s.router.Route(apiVersion + "/exchanges", func(r chi.Router) {
 		//r.With(paginate).Get("/", s.listExchanges())
-		r.Get("/", s.listExchanges())
+		r.Get("/", s.listExchanges())  				// GET /api/v1/exchanges
 	})
 }
