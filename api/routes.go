@@ -24,4 +24,8 @@ func (s *server) registerRoutes() {
 		//r.With(paginate).Get("/", s.listExchanges())
 		r.Get("/", s.getExchanges())  				// GET /api/v1/exchanges
 	})
+
+	s.router.Route(apiVersion + "/balances-sheets", func(r chi.Router) {
+		r.Get("/", s.getBalanceSheets())				// GET /api/v1/balance-sheets
+	})
 }

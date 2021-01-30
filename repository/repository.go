@@ -13,6 +13,7 @@ import (
 
 type FMRepository interface {
 	GetExchanges(ctx context.Context) ([]model.Exchange, int, error)
+	GetBalanceSheets(ctx context.Context) ([]model.BalanceSheet, int, error)
 }
 
 // fMRepository is a repository for handling financial-modelling data.
@@ -63,6 +64,31 @@ func (fmr *fMRepository) GetExchanges(ctx context.Context) ([]model.Exchange, in
 			return nil, 0, err
 		}
 		result = append(result, *exchange)
+	}
+
+	return result, len(result), nil
+}
+
+func (fmr *fMRepository) GetBalanceSheets(ctx context.Context) ([]model.BalanceSheet, int, error) {
+	c := fmr.db.Collection("balance_sheets")
+	dbCtx, _ := context.WithTimeout(context.Background(), 5*time.Second) // Todo: Clean up with cancel
+
+	filter := bson.M{}
+	cursor, err := c.Find(ctx, filter)
+	if err != nil {
+		fmr.logger.Error(err.Error())
+		return nil, 0, err
+	}
+	defer cursor.Close(ctx) // Todo: Clean up here with error handling
+
+	var result []model.BalanceSheet
+	for cursor.Next(dbCtx) {
+		balanceSheet := &model.BalanceSheet{}
+		if err := cursor.Decode(balanceSheet); err != nil {
+			fmr.logger.Error(err.Error())
+			return nil, 0, err
+		}
+		result = append(result, *balanceSheet)
 	}
 
 	return result, len(result), nil

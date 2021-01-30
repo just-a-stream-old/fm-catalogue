@@ -10,6 +10,7 @@ import (
 
 type FMService interface {
 	GetExchanges(context.Context) ([]model.Exchange, int, error)
+	GetBalanceSheets(context.Context) ([]model.BalanceSheet, int, error)
 }
 
 type fMService struct {
@@ -17,18 +18,25 @@ type fMService struct {
 	fMRepository repository.FMRepository
 }
 
-func (fms *fMService) GetExchanges(ctx context.Context) ([]model.Exchange, int, error) {
-	exchanges, count, err := fms.fMRepository.GetExchanges(ctx)
-	if err != nil {
-		return nil, count, err
-	}
-
-	return exchanges, count, err
-}
-
 func NewFMService(cfg *config.Service, logger *zap.Logger, fMRepository repository.FMRepository) *fMService {
 	return &fMService{
 		logger: logger,
 		fMRepository: fMRepository,
 	}
+}
+
+func (fms *fMService) GetExchanges(ctx context.Context) ([]model.Exchange, int, error) {
+	exchanges, count, err := fms.fMRepository.GetExchanges(ctx)
+	if err != nil {
+		return nil, count, err
+	}
+	return exchanges, count, err
+}
+
+func (fms *fMService) GetBalanceSheets(ctx context.Context) ([]model.BalanceSheet, int, error) {
+	exchanges, count, err := fms.fMRepository.GetBalanceSheets(ctx)
+	if err != nil {
+		return nil, count, err
+	}
+	return exchanges, count, err
 }
