@@ -20,7 +20,14 @@ type server struct {
 }
 
 // NewServer constructs a new server.
-func NewServer(cfg *config.Server, logger *zap.Logger, fMService service.FMService) *server {
+func NewServer(cfg *config.Server, logger *zap.Logger, fMService service.FMService) (*server, error) {
+	if cfg.Name == "" {
+		return nil, fmt.Errorf("server name is required to construct the server, and is empty")
+	}
+	if cfg.Version == "" {
+		return nil, fmt.Errorf("server version is required to construct the server, and is empty")
+	}
+
 	s := &server{
 		logger: logger,
 		fMService: fMService,
@@ -33,7 +40,8 @@ func NewServer(cfg *config.Server, logger *zap.Logger, fMService service.FMServi
 		Handler: s,
 	}
 	s.registerRoutes()
-	return s
+
+	return s, nil
 }
 
 func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
