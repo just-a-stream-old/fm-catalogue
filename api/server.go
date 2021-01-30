@@ -1,12 +1,19 @@
 package api
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/go-chi/chi"
+	"gitlab.com/open-source-keir/financial-modelling/fm-catalogue/config"
 	"gitlab.com/open-source-keir/financial-modelling/fm-catalogue/service"
 	"go.uber.org/zap"
 	"net/http"
 )
+
+type apiError struct {
+	Error 	string	`json:"Error"`
+	Message string	`json:"Message"`
+}
 
 // server is a HTTP server.
 type server struct {
@@ -18,25 +25,18 @@ type server struct {
 	version string
 }
 
-// Config is the HTTP server configuration.
-type Config struct {
-	// Logger is the logging instance to use
-	Logger *zap.Logger
-	// service is the financial modelling service
-	FMService service.FMService
-	// Name is the Name of the service
-	Name string
-	// Version is the Version of the service
-	Version string
-	// Port is the HTTP Port to serve on
-	Port int
-}
+// NewServer constructs a new server.
+func NewServer(cfg *config.Server, logger *zap.Logger, fMService service.FMService) (*server, error) {
+	if cfg.Name == "" {
+		return nil, fmt.Errorf("server name is required to construct the server, and is empty")
+	}
+	if cfg.Version == "" {
+		return nil, fmt.Errorf("server version is required to construct the server, and is empty")
+	}
 
-// NewServer creates a new server.
-func NewServer(cfg *Config) *server {
 	s := &server{
-		logger: cfg.Logger,
-		fMService: cfg.FMService,
+		logger: logger,
+		fMService: fMService,
 		name: cfg.Name,
 		version: cfg.Version,
 	}
@@ -46,7 +46,8 @@ func NewServer(cfg *Config) *server {
 		Handler: s,
 	}
 	s.registerRoutes()
-	return s
+
+	return s, nil
 }
 
 func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -54,9 +55,27 @@ func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *server) Run() {
+	// Todo: Handle graceful shutdown with channel pattern!
 	s.logger.Info(fmt.Sprintf("%s-%s running on port %s", s.name, s.version, s.Addr))
 	if err := s.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		s.logger.Error(err.Error())
 	}
-	// Todo: Handle graceful shutdown with channel pattern!
+}
+
+func (s *server) respondError(w http.ResponseWriter, r *http.Request, code int, err error, message string) {
+	s.logger.Error(err.Error())
+	s.respondJSON(w, code, apiError{
+		Error: err.Error(),
+		Message: message,
+	})
+}
+
+func (s *server) respondJSON(w http.ResponseWriter, code int, payload interface{}) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(code)
+	if err := json.NewEncoder(w).Encode(payload); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
 }
