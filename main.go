@@ -23,20 +23,26 @@ func run() error {
 
 	cfg, err := config.GetConfig()
 	if err != nil {
+		logger.Error(err.Error())
 		return err
 	}
 
-	fMRepository, err := repository.NewFMRepository(logger)
+	//db, err := setupDB()
+	//if err != nil {
+	//	logger.Error(err.Error())
+	//	return err
+	//}
+	//defer closeDB()
 
-	fMService := service.NewFMService(logger, fMRepository)
+	fMRepository, err := repository.NewFMRepository(&cfg.Repository, logger)
+	if err != nil {
+		logger.Error(err.Error())
+		return err
+	}
 
-	server := api.NewServer(&api.Config{
-		Logger:    logger,
-		FMService: fMService,
-		Name:      cfg.Server.Name,
-		Version:   cfg.Server.Version,
-		Port:      cfg.Server.Port,
-	})
+	fMService := service.NewFMService(&cfg.Service, logger, fMRepository)
+
+	server := api.NewServer(&cfg.Server, logger, fMService)
 
 	server.Run()
 

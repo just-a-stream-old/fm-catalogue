@@ -1,6 +1,7 @@
 package service
 
 import (
+	"gitlab.com/open-source-keir/financial-modelling/fm-catalogue/config"
 	"gitlab.com/open-source-keir/financial-modelling/fm-catalogue/repository"
 	"go.uber.org/zap"
 )
@@ -17,7 +18,7 @@ type fMService struct {
 func (fms *fMService) Do() {
 }
 
-func NewFMService(logger *zap.Logger, fMRepository repository.FMRepository) *fMService {
+func NewFMService(cfg *config.Service, logger *zap.Logger, fMRepository repository.FMRepository) *fMService {
 	return &fMService{
 		logger: logger,
 		fMRepository: fMRepository,

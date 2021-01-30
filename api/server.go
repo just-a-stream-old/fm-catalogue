@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"github.com/go-chi/chi"
+	"gitlab.com/open-source-keir/financial-modelling/fm-catalogue/config"
 	"gitlab.com/open-source-keir/financial-modelling/fm-catalogue/service"
 	"go.uber.org/zap"
 	"net/http"
@@ -18,25 +19,11 @@ type server struct {
 	version string
 }
 
-// Config is the HTTP server configuration.
-type Config struct {
-	// Logger is the logging instance to use
-	Logger *zap.Logger
-	// service is the financial modelling service
-	FMService service.FMService
-	// Name is the Name of the service
-	Name string
-	// Version is the Version of the service
-	Version string
-	// Port is the HTTP Port to serve on
-	Port int
-}
-
-// NewServer creates a new server.
-func NewServer(cfg *Config) *server {
+// NewServer constructs a new server.
+func NewServer(cfg *config.Server, logger *zap.Logger, fMService service.FMService) *server {
 	s := &server{
-		logger: cfg.Logger,
-		fMService: cfg.FMService,
+		logger: logger,
+		fMService: fMService,
 		name: cfg.Name,
 		version: cfg.Version,
 	}

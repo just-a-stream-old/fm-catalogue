@@ -1,6 +1,9 @@
 package repository
 
-import "go.uber.org/zap"
+import (
+	"gitlab.com/open-source-keir/financial-modelling/fm-catalogue/config"
+	"go.uber.org/zap"
+)
 
 type FMRepository interface {
 	Do()
@@ -11,7 +14,13 @@ type fMRepository struct {
 	db string
 }
 
-func NewFMRepository(logger *zap.Logger) (*fMRepository, error) {
+func NewFMRepository(cfg *config.Repository, logger *zap.Logger) (*fMRepository, error) {
+	// Setup database
+
+
+	// Setup database connection
+	//connectionStr := fmt.Sprintf("")
+
 	fMRepository := &fMRepository{
 		logger: logger,
 		db:     "db connection / cursor would go here",
