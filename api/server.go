@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/go-chi/chi"
 	"gitlab.com/open-source-keir/financial-modelling/fm-catalogue/config"
@@ -8,6 +9,11 @@ import (
 	"go.uber.org/zap"
 	"net/http"
 )
+
+type apiError struct {
+	Error 	string	`json:"Error"`
+	Message string	`json:"Message"`
+}
 
 // server is a HTTP server.
 type server struct {
@@ -49,9 +55,27 @@ func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *server) Run() {
+	// Todo: Handle graceful shutdown with channel pattern!
 	s.logger.Info(fmt.Sprintf("%s-%s running on port %s", s.name, s.version, s.Addr))
 	if err := s.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		s.logger.Error(err.Error())
 	}
-	// Todo: Handle graceful shutdown with channel pattern!
+}
+
+func (s *server) respondError(w http.ResponseWriter, r *http.Request, code int, err error, message string) {
+	s.logger.Error(err.Error())
+	s.respondJSON(w, code, apiError{
+		Error: err.Error(),
+		Message: message,
+	})
+}
+
+func (s *server) respondJSON(w http.ResponseWriter, code int, payload interface{}) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(code)
+	if err := json.NewEncoder(w).Encode(payload); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
 }
