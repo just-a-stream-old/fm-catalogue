@@ -23,10 +23,12 @@ type Config struct {
 
 // config.Repository is the repository & persistence configuration.
 type Repository struct {
+	DBDriver string 	`envconfig:"DB_DRIVER" required:"true"`
 	DBHost string 		`envconfig:"DB_HOST" required:"true"`
 	DBPort string		`envconfig:"DB_PORT" required:"true"`
 	DBUsername string	`envconfig:"DB_USERNAME" required:"true"`
 	DBPassword string	`envconfig:"DB_PASSWORD" required:"true"`
+	DBName string 		`envconfig:"DB_NAME" required:"true"`
 }
 
 // config.Service is the service configuration.
@@ -36,7 +38,7 @@ type Service struct {
 
 // config.Server is the HTTP server configuration.
 type Server struct {
-	// Name is the Name of the service the Server is hosting.
+	// Name is the Name of the function the Server is hosting.
 	Name string 		`envconfig:"SERVER_NAME" required:"true"`
 	// Version is the Version of the servic
 	Version string 		`envconfig:"SERVER_VERSION" required:"true"`
